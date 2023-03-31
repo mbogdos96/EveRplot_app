@@ -1,6 +1,6 @@
 library(shiny)
 library(dplyr)
-library(tidyverse)
+library(ggplot2)
 library(colourpicker)
 library(rhandsontable)
 library(svglite)
