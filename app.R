@@ -55,10 +55,8 @@ ui <- fluidPage(
                                              selected = 1),
                                 
                                 #Slider for datapoint size
-                                sliderInput("psz",
+                                textInput("psz",
                                             "Size of Datapoints",
-                                            min = 0,
-                                            max = 30,
                                             value = 4),
                                 
                                 #Colourpicker for datapoint colour, 
@@ -118,10 +116,8 @@ ui <- fluidPage(
                        ),
                        
                        #Slider for curve size
-                       sliderInput("csz",
+                       textInput("csz",
                                    "Size of Curve",
-                                   min = 0,
-                                   max = 10,
                                    value = 2),
                        
                        #Slider for curve opacity
@@ -182,11 +178,9 @@ ui <- fluidPage(
                                      max = 30,
                                      value = 5),
                          
-                         #Slider for chainging label size
-                         sliderInput("lsz",
+                         #Slider for changing label size
+                         textInput("lsz",
                                      "Size of Labels",
-                                     min = 0,
-                                     max = 30,
                                      value = 5),
                          
                          ),
@@ -236,10 +230,8 @@ ui <- fluidPage(
                                                       value = 1),
                                           
                                           #Slider for altering axis title and axis label size
-                                          sliderInput("lab_f",
+                                          textInput("lab_f",
                                                       "Axis Element Font Size",
-                                                      min = 0,
-                                                      max = 50,
                                                       value = 20)
                          ),
                          
@@ -404,31 +396,31 @@ server <- function(input,output,session){
   #===================================================================
   
   #Define themes
-  themething <- reactive({theme(axis.line = element_line(size = input$lab_t),
+  themething <- reactive({theme(axis.line = element_line(size = as.numeric(input$lab_t)),
                                 axis.ticks.y = element_line(size = 1.5), 
-                                axis.text.y = element_text(size = input$lab_f), 
-                                axis.title = element_text(size = input$lab_f),
+                                axis.text.y = element_text(size = as.numeric(input$lab_f)), 
+                                axis.title = element_text(size = as.numeric(input$lab_f)),
                                 axis.text.x = element_blank(),
                                 axis.ticks.x = element_blank(),
-                                plot.title = element_text(size = input$lab_f,
+                                plot.title = element_text(size = as.numeric(input$lab_f),
                                                           face = "bold"),
                                 plot.title.position = "panel",
                                 legend.key = element_blank(),
                                 legend.background = element_blank(),
                                 legend.position = "none",
-                                text = element_text(size = input$lab_f, 
-                                                    family = input$lab_fn),
+                                text = element_text(size = as.numeric(input$lab_f), 
+                                                    family = as.numeric(input$lab_fn)),
                                 panel.grid.major = element_blank(), 
                                 panel.grid.minor = element_blank(),
                                 panel.background = element_rect(fill = "transparent",colour = NA),
                                 plot.background = element_rect(fill = "transparent",colour = NA))
   })
   
-  themething2 <- reactive({theme(axis.line = element_line(size = input$lab_t), 
+  themething2 <- reactive({theme(axis.line = element_line(size = as.numeric(input$lab_t)), 
                                  axis.ticks = element_line(size = 1.5), 
-                                 axis.text = element_text(size = input$lab_f), 
-                                 axis.title = element_text(size = input$lab_f),
-                                 plot.title = element_text(size = input$lab_f,
+                                 axis.text = element_text(size = as.numeric(input$lab_f)), 
+                                 axis.title = element_text(size = as.numeric(input$lab_f)),
+                                 plot.title = element_text(size = as.numeric(input$lab_f),
                                                            face = "bold"),
                                  plot.title.position = "panel",
                                  legend.key = element_blank(),
@@ -438,8 +430,8 @@ server <- function(input,output,session){
                                  axis.text.x = element_blank(),
                                  axis.ticks.x = element_blank(),
                                  axis.title.x = element_blank(),
-                                 text = element_text(size = input$lab_f, 
-                                                     family = input$lab_fn),
+                                 text = element_text(size = as.numeric(input$lab_f), 
+                                                     family = as.numeric(input$lab_fn)),
                                  panel.grid.major = element_blank(), 
                                  panel.grid.minor = element_blank(),
                                  panel.background = element_rect(fill = "transparent",colour = NA),
@@ -454,8 +446,8 @@ server <- function(input,output,session){
                                  axis.text = element_blank(),
                                  axis.ticks = element_blank(),
                                  axis.title = element_blank(),
-                                 text = element_text(size = input$lab_f, 
-                                                     family = input$lab_fn),
+                                 text = element_text(size = as.numeric(input$lab_f), 
+                                                     family = as.numeric(input$lab_fn)),
                                  panel.grid.major = element_blank(), 
                                  panel.grid.minor = element_blank(),
                                  panel.background = element_rect(fill = "transparent",colour = NA),
@@ -534,7 +526,7 @@ server <- function(input,output,session){
           df_up_e()$A[j] * exp(-((x - df_up_e()$B[j])^2) / (2 * (df_up_e()$C[j] / 3.5)^2)) + df_up_e()$D[j]
         }, 
         xlim = c(df_up_e()$rc[j], df_up_e()$rc[j + 1]),
-        size = input$csz, 
+        size = as.numeric(input$csz), 
         alpha = input$alpha,
         color = input$c_col)
       })
@@ -561,7 +553,7 @@ server <- function(input,output,session){
                                  #the nth dataframe to the nth colour in the list
                                  #and not the nth entry in some dataframe
                                  color = epil_xrwm_c()[[which(sapply(s_df(), identical, df))]],
-                                 size = input$csz,
+                                 size = as.numeric(input$csz),
                                  alpha = input$alpha) #Create each layer
           t_plot_layers <- append(t_plot_layers, list(layer))
           #Append all the layers to list
@@ -578,7 +570,7 @@ server <- function(input,output,session){
           geom_segment(data = df, 
                        aes(x = x, xend = xend, y = y, yend = yend),
                        linetype = input$linet,
-                       size = input$csz,
+                       size = as.numeric(input$csz),
                        color = input$c_col,
                        alpha = input$alpha)
         })
@@ -590,7 +582,7 @@ server <- function(input,output,session){
           geom_segment(data = shifted_ex_list()[[i]], 
                        aes(x = x, xend = xend, y = y, yend = yend),
                        linetype = input$linet,
-                       size = input$csz,
+                       size = as.numeric(input$csz),
                        color = epil_xrwm_c()[[i]],
                        alpha = input$alpha)
         })
@@ -601,7 +593,7 @@ server <- function(input,output,session){
     if (input$mpath == FALSE)
       t_plot <- t_plot +
         geom_point(data = df_up_e(),
-                   size = input$psz,
+                   size = as.numeric(input$psz),
                    shape = sxhmata(),
                    color = input$p_col,
                    aes(x = rc,
@@ -611,7 +603,7 @@ server <- function(input,output,session){
     if (input$mpath == TRUE)
       t_plot <- t_plot +
       geom_point(data = df_up_e(),
-                 size = input$psz,
+                 size = as.numeric(input$psz),
                  shape = sxhmata(),
                  aes(x = rc,
                      y = dg,
@@ -630,7 +622,7 @@ server <- function(input,output,session){
                                               label = paste0("(", 
                                                              dg, 
                                                              ")")),
-                                    size = input$lsz)
+                                    size = as.numeric(input$lsz))
     }
     
     #Names only
@@ -640,7 +632,7 @@ server <- function(input,output,session){
                    mapping = aes(x = rc,
                                  y = nudge,
                                  label = paste0(cpd_num)),
-                   size = input$lsz)
+                   size = as.numeric(input$lsz))
     }
     
     #Names and Energies
@@ -654,7 +646,7 @@ server <- function(input,output,session){
                                                 "(", 
                                                 dg, 
                                                 ")")),
-                   size = input$lsz)
+                   size = as.numeric(input$lsz))
     }
     
     #Dynamic names and energies
@@ -668,7 +660,7 @@ server <- function(input,output,session){
                                                 "(", 
                                                 dg, 
                                                 ")")),
-                   size = input$lsz)
+                   size = as.numeric(input$lsz))
     }
     
     #No labels
