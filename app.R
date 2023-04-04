@@ -208,6 +208,11 @@ ui <- fluidPage(
                                      max = 50,
                                      value = 20),
                          
+                         #Slider for altering y axis number of tick marks
+                         textInput("lab_tick",
+                                     "Y Axis Marker Spacing",
+                                     value = 5),
+                         
                          #Slider for altering axis line thickness
                          sliderInput("lab_t",
                                      "Axis Thickness",
@@ -471,7 +476,10 @@ server <- function(input,output,session){
     #Create basic plot
     t_plot <- ggplot(data = NULL)+
       labs(x = input$x_lab,
-           y = input$y_lab) 
+           y = input$y_lab) +
+      scale_y_continuous(breaks = (seq(min(df_up_e()$dg), 
+                                       max(df_up_e()$dg),
+                                       by = as.numeric(input$lab_tick))))
     
     #Conditional for what theme is used
     if (input$x_check == TRUE)
