@@ -196,34 +196,52 @@ ui <- fluidPage(
                          #Section for axes
                          h4("Axes"), #Define the title of the section
                          
-                         #Text input for changing axis font
-                         textInput("lab_fn",
-                                   "Axis Font",
-                                   value = "Verdana"),
+                         #Checkbox for manually editing the y axis
+                         checkboxInput("y_auto",
+                                       "Manually Format Axes",
+                                       value = FALSE),
                          
-                         #Slider for altering axis title and axis label size
-                         sliderInput("lab_f",
-                                     "Axis Element Font Size",
-                                     min = 0,
-                                     max = 50,
-                                     value = 20),
-                         
-                         #Slider for altering y axis number of tick marks
-                         textInput("lab_tick",
-                                     "Y Axis Marker Spacing",
-                                     value = 5),
-                         
-                         #Slider for altering axis line thickness
-                         sliderInput("lab_t",
-                                     "Axis Thickness",
-                                     min = 0,
-                                     max = 20,
-                                     value = 1),
-                         
-                         #Text input for y axis title
-                         textInput("y_lab",
-                                   "y-Axis Label",
-                                   value = "ΔG (kcal/mol)"),
+                         #Conditional list for colouring lines by pathway
+                         conditionalPanel(condition = "input.y_auto == 1",
+                                          #Text input for y axis title
+                                          textInput("y_lab",
+                                                    "y-Axis Label",
+                                                    value = "ΔG (kcal/mol)"),
+                                          
+                                          #Text input for altering y axis number of tick marks
+                                          textInput("lab_tick",
+                                                    "Y Axis Marker Spacing",
+                                                    value = 5),
+                                          
+                                          #Text input for altering y axis max value
+                                          textInput("y_max",
+                                                    "Y Axis Max Value",
+                                                    value = 15),
+                                          
+                                          #Text input for altering y axis min value
+                                          textInput("y_min",
+                                                    "Y Axis Min Value",
+                                                    value = -5),
+                                          
+                                          #Text input for changing axis font
+                                          textInput("lab_fn",
+                                                    "Axis Font",
+                                                    value = "Verdana"),
+                                          
+                                          #Slider for altering axis line thickness
+                                          sliderInput("lab_t",
+                                                      "Axis Thickness",
+                                                      min = 0,
+                                                      max = 20,
+                                                      value = 1),
+                                          
+                                          #Slider for altering axis title and axis label size
+                                          sliderInput("lab_f",
+                                                      "Axis Element Font Size",
+                                                      min = 0,
+                                                      max = 50,
+                                                      value = 20)
+                         ),
                          
                          #Tickbox for whether the y axis is shown
                          checkboxInput("y_check",
@@ -237,7 +255,7 @@ ui <- fluidPage(
                          
                          #If the x axis is shown, a text input appears which 
                          #allows for editing the text it displays
-                         conditionalPanel(condition = "input.x_check == 1",
+                         conditionalPanel(condition = "input.x_check == 1 && input.y_auto == 1",
                                           textInput("x_lab",
                                                     "x-Axis Label",
                                                     value = "Reaction Coordinate")
@@ -474,25 +492,38 @@ server <- function(input,output,session){
   uelw <- reactive({
     
     #Create basic plot
+    #Automatic axes
+    if (input$y_auto == FALSE){
+      t_plot <- ggplot(data = NULL)+
+        labs(x = input$x_lab,
+             y = input$y_lab)
+    }
+    
+    #Manually formatted axes
+    if (input$y_auto == TRUE){
     t_plot <- ggplot(data = NULL)+
       labs(x = input$x_lab,
            y = input$y_lab) +
-      scale_y_continuous(breaks = (seq(min(df_up_e()$dg), 
-                                       max(df_up_e()$dg),
+      scale_y_continuous(breaks = (seq(input$y_min, 
+                                       input$y_max,
                                        by = as.numeric(input$lab_tick))))
+    }
     
     #Conditional for what theme is used
-    if (input$x_check == TRUE)
+    if (input$x_check == TRUE){
       t_plot <- t_plot +
         themething()
+    }
     
-    if (input$x_check == FALSE)
+    if (input$x_check == FALSE){
       t_plot <- t_plot +
         themething2()
+    }
     
-    if (input$y_check == FALSE)
+    if (input$y_check == FALSE){
       t_plot <- t_plot +
         themething3()
+    }
     
     #Layers corresponding to lines connecting datapoints
     #Gaussian, one pathway
