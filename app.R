@@ -223,10 +223,8 @@ ui <- fluidPage(
                                                     value = "Verdana"),
                                           
                                           #Slider for altering axis line thickness
-                                          sliderInput("lab_t",
+                                          textInput("lab_t",
                                                       "Axis Thickness",
-                                                      min = 0,
-                                                      max = 20,
                                                       value = 1),
                                           
                                           #Slider for altering axis title and axis label size
@@ -397,7 +395,7 @@ server <- function(input,output,session){
   
   #Define themes
   themething <- reactive({theme(axis.line = element_line(size = as.numeric(input$lab_t)),
-                                axis.ticks.y = element_line(size = 1.5), 
+                                axis.ticks.y = element_line(size = as.numeric(input$lab_t)), 
                                 axis.text.y = element_text(size = as.numeric(input$lab_f)), 
                                 axis.title = element_text(size = as.numeric(input$lab_f)),
                                 axis.text.x = element_blank(),
@@ -417,7 +415,7 @@ server <- function(input,output,session){
   })
   
   themething2 <- reactive({theme(axis.line = element_line(size = as.numeric(input$lab_t)), 
-                                 axis.ticks = element_line(size = 1.5), 
+                                 axis.ticks = element_line(size = as.numeric(input$lab_t)), 
                                  axis.text = element_text(size = as.numeric(input$lab_f)), 
                                  axis.title = element_text(size = as.numeric(input$lab_f)),
                                  plot.title = element_text(size = as.numeric(input$lab_f),
