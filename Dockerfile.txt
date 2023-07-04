@@ -12,8 +12,8 @@ RUN yum update -y && \
 WORKDIR /home/mkb/usr/mytmp
 
 # Install renv and restore the project
-RUN R -e 'install.packages("renv")'
-RUN R -e 'renv::restore()'
+RUN Rscript -e 'install.packages("renv")'
+RUN Rscript -e 'renv::restore()'
 
 # Expose the default Shiny port
 EXPOSE 3838
