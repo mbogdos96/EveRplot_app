@@ -6,7 +6,7 @@ RUN yum update -y && \
     yum install -y epel-release && \
     yum install -y R && \
     yum install -y libcurl-devel openssl-devel git && \
-    yum install -y -libxml2-devel libdigit-devel
+    yum install -y libxml2-devel libdigit-devel
 
 # Set up the working directory
 WORKDIR /home/mkb/usr/mytmp
